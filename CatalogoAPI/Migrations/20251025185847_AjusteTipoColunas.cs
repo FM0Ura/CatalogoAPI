@@ -15,6 +15,11 @@ namespace CatalogoAPI.Migrations
                 table: "Categorias",
                 newName: "CategoriaId");
 
+            migrationBuilder.RenameColumn(
+            name: "Id",
+            table: "Produtos",
+            newName: "ProdutoId");
+
             migrationBuilder.AlterColumn<decimal>(
                 name: "Preco",
                 table: "Produtos",

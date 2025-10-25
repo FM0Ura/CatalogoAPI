@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace CatalogoAPI.Models;
 
 [Table("Produtos")]
 public class ProdutoModel
 {
-    [Key]
-    public int Id { get; set; }
+    [Key, JsonIgnore]
+    public int ProdutoId { get; set; }
 
     [Required, StringLength(80)]
     public string? Nome { get; set; }
@@ -21,9 +22,13 @@ public class ProdutoModel
     [Required, StringLength(300)]
     public string? ImagemUrl { get; set; }
     public float Estoque { get; set; }
-    public DateTime DataCadastro { get; set; }
+
+    [JsonIgnore]
+    public DateTime DataCadastro { get; set; } = DateTime.Now;
 
     [ForeignKey("CategoriaId")]
     public int CategoriaId { get; set; }
+
+    [JsonIgnore]
     public CategoriaModel? Categoria { get; set; }
 }
