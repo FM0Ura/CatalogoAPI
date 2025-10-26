@@ -2,8 +2,6 @@
 using CatalogoAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Reflection.Metadata.Ecma335;
 
 namespace CatalogoAPI.Controllers;
 
@@ -21,63 +19,98 @@ public class ProdutosController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<ProdutoModel>> GetProdutos()
     {
-        var produtos = _context.Produtos.ToList();
-        if (produtos is null)
+        try
         {
-            return NotFound("Produtos não encontrados!");
+            var produtos = _context.Produtos.AsNoTracking().ToList();
+            if (produtos is null)
+            {
+                return NotFound("Produtos não encontrados!");
+            }
+            return Ok(produtos);
         }
-        return produtos;
+        catch (Exception)
+        {
+            return StatusCode(500, "Erro ao obter produtos.");
+        }
     }
 
     [HttpGet("{id:int}", Name="ObterProduto")]
     public ActionResult<ProdutoModel> GetProduto(int id)
     {
-        var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-        if (produto is null)
+        try
         {
-            return NotFound($"Produto de ID {id} não encontrado!");
+            var produto = _context.Produtos.AsNoTracking().FirstOrDefault(p => p.ProdutoId == id);
+            if (produto is null)
+            {
+                return NotFound($"Produto de ID {id} não encontrado!");
+            }
+            return Ok(produto);
         }
-        return produto;
+        catch (Exception)
+        {
+            return StatusCode(500, "Erro ao obter produto.");
+        }
     }
 
     [HttpPost]
     public ActionResult PostProduto(ProdutoModel produto)
     {
-        if (produto is null) return BadRequest("Produto vazio!");
+        try
+        {
+            if (produto is null) return BadRequest("Produto vazio!");
 
-        _context.Produtos.Add(produto);
-        _context.SaveChanges();
-        
-        return new CreatedAtRouteResult("ObterProduto",
-            new {id = produto.ProdutoId}, produto);
+            _context.Produtos.Add(produto);
+            _context.SaveChanges();
+            
+            return new CreatedAtRouteResult("ObterProduto",
+                new {id = produto.ProdutoId}, produto);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Erro ao cadastrar produto.");
+        }
     }
 
     [HttpPut("{id:int}")]
     public ActionResult AlterarProduto(int id, ProdutoModel produto)
     {
-        if (id != produto.ProdutoId)
+        try
         {
-            return BadRequest($"ID informado {id} diferente de ProdutoID!");   
-        }
+            if (id != produto.ProdutoId)
+            {
+                return BadRequest($"ID informado {id} diferente de ProdutoID!");   
+            }
 
-        _context.Produtos.Entry(produto).State = EntityState.Modified;
-        _context.SaveChanges();
-        
-        return Ok(produto);
+            _context.Produtos.Entry(produto).State = EntityState.Modified;
+            _context.SaveChanges();
+            
+            return Ok(produto);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Erro ao alterar produto.");
+        }
     }
 
     [HttpDelete("{id:int}")]
     public ActionResult DeletarProduto(int id)
     {
-        var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-        if (produto is null)
+        try
         {
-            return NotFound("O ID informado não consta no Banco de Dados!");
+            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+            if (produto is null)
+            {
+                return NotFound("O ID informado não consta no Banco de Dados!");
+            }
+
+            _context.Produtos.Remove(produto);
+            _context.SaveChanges();
+
+            return Ok(produto);
         }
-
-        _context.Produtos.Remove(produto);
-        _context.SaveChanges();
-
-        return Ok(produto);
+        catch (Exception)
+        {
+            return StatusCode(500, "Erro ao deletar produto.");
+        }
     }
 }
