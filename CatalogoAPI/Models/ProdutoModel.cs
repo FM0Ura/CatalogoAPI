@@ -7,7 +7,7 @@ namespace CatalogoAPI.Models;
 [Table("Produtos")]
 public class ProdutoModel
 {
-    [Key, JsonIgnore]
+    [Key]
     public int ProdutoId { get; set; }
 
     [Required, StringLength(80)]

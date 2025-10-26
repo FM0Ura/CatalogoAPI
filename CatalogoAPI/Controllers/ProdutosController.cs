@@ -51,4 +51,33 @@ public class ProdutosController : ControllerBase
         return new CreatedAtRouteResult("ObterProduto",
             new {id = produto.ProdutoId}, produto);
     }
+
+    [HttpPut("{id:int}")]
+    public ActionResult AlterarProduto(int id, ProdutoModel produto)
+    {
+        if (id != produto.ProdutoId)
+        {
+            return BadRequest($"ID informado {id} diferente de ProdutoID!");   
+        }
+
+        _context.Produtos.Entry(produto).State = EntityState.Modified;
+        _context.SaveChanges();
+        
+        return Ok(produto);
+    }
+
+    [HttpDelete("{id:int}")]
+    public ActionResult DeletarProduto(int id)
+    {
+        var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+        if (produto is null)
+        {
+            return NotFound("O ID informado não consta no Banco de Dados!");
+        }
+
+        _context.Produtos.Remove(produto);
+        _context.SaveChanges();
+
+        return Ok(produto);
+    }
 }
