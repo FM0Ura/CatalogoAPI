@@ -34,7 +34,26 @@ public class ProdutosController : ControllerBase
         }
     }
 
-    [HttpGet("{id:int}", Name="ObterProduto")]
+
+    [HttpGet("primeiro")]
+    public ActionResult<ProdutoModel> GetPrimeiroProduto()
+    {
+        try
+        {
+            var produto = _context.Produtos.AsNoTracking().FirstOrDefault();
+            if (produto is null)
+            {
+                return NotFound("Produtos não encontrados!");
+            }
+            return Ok(produto);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Erro ao obter produtos.");
+        }
+    }
+
+    [HttpGet("{id:int:min(1)}", Name="ObterProduto")]
     public ActionResult<ProdutoModel> GetProduto(int id)
     {
         try
@@ -53,7 +72,7 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult PostProduto(ProdutoModel produto)
+    public ActionResult<ProdutoModel> PostProduto(ProdutoModel produto)
     {
         try
         {
@@ -71,8 +90,8 @@ public class ProdutosController : ControllerBase
         }
     }
 
-    [HttpPut("{id:int}")]
-    public ActionResult AlterarProduto(int id, ProdutoModel produto)
+    [HttpPut("{id:int:min(1)}")]
+    public ActionResult<ProdutoModel> AlterarProduto(int id, ProdutoModel produto)
     {
         try
         {
@@ -92,8 +111,8 @@ public class ProdutosController : ControllerBase
         }
     }
 
-    [HttpDelete("{id:int}")]
-    public ActionResult DeletarProduto(int id)
+    [HttpDelete("{id:int:min(1)}")]
+    public ActionResult<ProdutoModel> DeletarProduto(int id)
     {
         try
         {

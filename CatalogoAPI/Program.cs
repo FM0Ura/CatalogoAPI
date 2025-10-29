@@ -7,14 +7,11 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers().AddJsonOptions(options =>
         options.JsonSerializerOptions
             .ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddOpenApi(); // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-
-// Adicionar serviços ao contêiner.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var password = builder.Configuration["MYSQL_root_PASS"];
 
