@@ -15,9 +15,11 @@ builder.Services.AddOpenApi(); // Learn more about configuring OpenAPI at https:
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var password = builder.Configuration["MYSQL_root_PASS"];
 
+var fullConnectionString = $"{connectionString}Password={password}";
+
 builder.Services.AddDbContext<CatalogoAPIContext>(options =>
-    options.UseMySql($"{connectionString}Password={password}",
-    ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(fullConnectionString,
+    ServerVersion.AutoDetect(fullConnectionString)));
 
 var app = builder.Build();
 
