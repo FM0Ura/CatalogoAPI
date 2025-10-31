@@ -22,7 +22,12 @@ public class CustomLogger : ILogger
     }
     private void WriteLog(string message)
     {
-        string caminhoArquivoLog = @"C:\Users\felip\source\repos\FM0Ura\CatalogoAPI\CatalogoAPI\Log\Logs.log";
+        string logDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
+        string caminhoArquivoLog = Path.Combine(logDirectory, "Logs.log");
 
         using (StreamWriter streamWriter = new StreamWriter(caminhoArquivoLog, true))
         {

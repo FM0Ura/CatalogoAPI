@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Log\" />
     <Folder Include="Validation\" />
   </ItemGroup>
 
