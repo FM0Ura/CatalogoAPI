@@ -1,0 +1,129 @@
+/* Estilos Globais e Reset */
+:root {
+  --cor-primaria: #007bff;
+  --cor-primaria-hover: #0056b3;
+  --cor-fundo: #f4f7f6;
+  --cor-card: #ffffff;
+  --cor-texto: #333;
+  --cor-texto-claro: #fff;
+  --cor-borda: #e9ecef;
+  --sombra-card: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+}
+
+/* Layout Principal */
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Card de Conteúdo */
+.content {
+  background-color: var(--cor-card);
+  border-radius: 8px;
+  box-shadow: var(--sombra-card);
+  padding: 30px 40px;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--cor-primaria);
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--cor-borda);
+  width: 100%;
+}
+
+/* Botão Principal */
+.btn-buscar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+  border: none;
+  border-radius: 5px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  align-self: center; /* Centraliza o botão no container flex */
+}
+
+.btn-buscar:hover {
+  background-color: var(--cor-primaria-hover);
+  transform: translateY(-2px);
+}
+
+.btn-buscar .material-icons {
+  font-size: 1.2rem;
+}
+
+/* Lista de Resultados */
+.resultados {
+  width: 100%;
+  min-height: 100px; /* Garante um espaço mínimo para a lista ou mensagem */
+}
+
+.sem-resultados {
+  color: #888;
+  font-style: italic;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+li {
+  background-color: var(--cor-fundo);
+  padding: 15px;
+  border-bottom: 1px solid var(--cor-borda);
+  transition: background-color 0.2s ease;
+}
+
+li:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+li:last-child {
+  border-bottom: none;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+li:hover {
+  background-color: #e9ecef;
+}

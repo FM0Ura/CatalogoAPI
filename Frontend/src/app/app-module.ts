@@ -1,8 +1,11 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule, provideHttpClient } from '@angular/common/http';
+/* Disponibilizando 'HttpClientModule' em AppModule para que fique disponível em toda a aplicação */
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // 1. Importe o módulo
 
 @NgModule({
   declarations: [
@@ -10,10 +13,13 @@ import { App } from './app';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners(),
+    provideHttpClient()
   ],
   bootstrap: [App]
 })

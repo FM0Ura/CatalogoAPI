@@ -7,4 +7,8 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\Frontend\browser\</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="src\app\categoria.service.ts" />
+    <None Remove="src\app\produto.interface.ts" />
+  </ItemGroup>
 </Project>
