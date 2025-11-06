@@ -45,7 +45,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     app.ConfigureExceptionHandler();
 }
-
+app.UseCors(policy => policy.WithOrigins("http://localhost:4200"));
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
