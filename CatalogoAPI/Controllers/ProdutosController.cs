@@ -1,5 +1,6 @@
 ﻿using CatalogoAPI.Models;
 using CatalogoAPI.Repositories.Produtos;
+using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -9,14 +10,13 @@ namespace CatalogoAPI.Controllers;
 [Route("[controller]")]
 public class ProdutosController : ControllerBase
 {
-    private readonly IProdutosRepository _produtoRepository;
+    private readonly IUnitOfWork _unityOfWork;
     private readonly ILogger<ProdutosController> _logger;
 
-    public ProdutosController(IProdutosRepository produtoRepository,
-                              ILogger<ProdutosController> logger)
+    public ProdutosController(ILogger<ProdutosController> logger, IUnitOfWork unityOfWork)
     {
-        _produtoRepository = produtoRepository;
         _logger = logger;
+        _unityOfWork = unityOfWork;
     }
 
     [HttpGet]
@@ -25,7 +25,7 @@ public class ProdutosController : ControllerBase
         _logger.LogInformation("Consultando todos os produtos...");
         try
         {
-            var produtos = _produtoRepository.GetAll();
+            var produtos = _unityOfWork.Produtos.GetAll();
             if (produtos is null || !produtos.Any())
             {
                 _logger.LogWarning("Nenhum produto encontrado.");
@@ -47,7 +47,7 @@ public class ProdutosController : ControllerBase
         _logger.LogInformation("Consultando produto com id={id}", id);
         try
         {
-            var produto = _produtoRepository.GetOne(c=> c.CategoriaId == id);
+            var produto = _unityOfWork.Produtos.GetOne(c=> c.CategoriaId == id);
             if (produto is null)
             {
                 _logger.LogWarning("Produto com id={id} não encontrado.", id);
@@ -69,7 +69,7 @@ public class ProdutosController : ControllerBase
         _logger.LogInformation("Consultando categorias e seus produtos...");
         try
         {
-            var categoriasEProdutos = _produtoRepository.GetProdutosPorCategoria(categoriaId);
+            var categoriasEProdutos = _unityOfWork.Produtos.GetProdutosPorCategoria(categoriaId);
 
             if (categoriasEProdutos is null)
             {
@@ -99,7 +99,8 @@ public class ProdutosController : ControllerBase
         _logger.LogInformation("Criando novo produto...");
         try
         {
-            var produtoCriado = _produtoRepository.Add(produto);
+            var produtoCriado = _unityOfWork.Produtos.Add(produto);
+            _unityOfWork.Commit();
             return new CreatedAtRouteResult("ObterProduto",
                 new { id = produtoCriado.ProdutoId }, produtoCriado);
         }
@@ -123,7 +124,8 @@ public class ProdutosController : ControllerBase
         _logger.LogInformation("Modificando produto com id={id}", id);
         try
         {
-            var produtoAtualizado = _produtoRepository.Update(produto);
+            var produtoAtualizado = _unityOfWork.Produtos.Update(produto);
+            _unityOfWork.Commit();
             return Ok(produtoAtualizado);
         }
         catch (Exception ex)
@@ -138,7 +140,8 @@ public class ProdutosController : ControllerBase
     public ActionResult DeletarProduto(int id)
     {
         _logger.LogInformation("Deletando produto com id={id}", id);
-        var produto = _produtoRepository.GetOne(c => c.ProdutoId == id);
+        var produto = _unityOfWork.Produtos.GetOne(c => c.ProdutoId == id);
+        _unityOfWork.Commit();
         if (produto is null)
         { 
             _logger.LogWarning("Produto com id={id} não encontrado para deleção.", id);
@@ -146,7 +149,7 @@ public class ProdutosController : ControllerBase
         }
         try
         {
-            var produtoDeletado = _produtoRepository.Delete(produto);
+            var produtoDeletado = _unityOfWork.Produtos.Delete(produto);
 
             if (produtoDeletado is null)
             {

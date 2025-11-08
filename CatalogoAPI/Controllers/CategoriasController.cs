@@ -1,5 +1,6 @@
 ﻿using CatalogoAPI.Models;
 using CatalogoAPI.Repositories.Generic;
+using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogoAPI.Controllers;
@@ -8,13 +9,13 @@ namespace CatalogoAPI.Controllers;
 [Route("[controller]")]
 public class CategoriasController : ControllerBase
 {
-    private readonly IRepositoryGeneric<CategoriaModel> _repository;
+    private readonly IUnityOfWork _unityOfWork;
     private readonly ILogger<CategoriasController> _logger;
 
-    public CategoriasController(IRepositoryGeneric<CategoriaModel> repository, ILogger<CategoriasController> logger)
+    public CategoriasController(ILogger<CategoriasController> logger, IUnityOfWork unityOfWork)
     {
-        _repository = repository;
         _logger = logger;
+        _unityOfWork = unityOfWork;
     }
 
     [HttpGet(Name = "GetCategorias")]
@@ -23,7 +24,7 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Consultando todas as categorias...");
         try
         {
-            var categorias = _repository.GetAll();
+            var categorias = _unityOfWork.Categorias.GetAll();
             if (categorias is null)
             {
                 _logger.LogWarning("Nenhuma categoria encontrada.");
@@ -46,7 +47,7 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Consultando categoria com id={id}", id);
         try
         {
-            var categoria = _repository.GetOne(c => c.CategoriaId == id);
+            var categoria = _unityOfWork.Categorias.GetOne(c => c.CategoriaId == id);
 
             if (categoria is null)
             {
@@ -76,7 +77,8 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Criando nova categoria...");
         try
         {
-            var categoriaCriada = _repository.Add(categoria);
+            var categoriaCriada = _unityOfWork.Categorias.Add(categoria);
+            _unityOfWork.Commit();
             return CreatedAtAction(nameof(GetCategoriaPorId), new { id = categoriaCriada.CategoriaId }, categoriaCriada);
         }
         catch (Exception ex)
@@ -99,7 +101,8 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Modificando categoria com id={id}", id);
         try
         {
-            var categoriaAtualizada = _repository.Update(categoria);
+            var categoriaAtualizada = _unityOfWork.Categorias.Update(categoria);
+            _unityOfWork.Commit();
 
             if (categoriaAtualizada is null)
             {
@@ -120,7 +123,7 @@ public class CategoriasController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult DeletarCategoria(int id)
     {
-        var categoria = _repository.GetOne(c => c.CategoriaId == id);
+        var categoria = _unityOfWork.Categorias.GetOne(c => c.CategoriaId == id);
         if (categoria is null)
         {
             _logger.LogWarning("Tentativa de deletar uma categoria inexistente com id={id}.", id);
@@ -130,8 +133,8 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Deletando categoria com id={id}", categoria.CategoriaId);
         try
         {
-            var categoriaDeletada = _repository.Delete(categoria);
-
+            var categoriaDeletada = _unityOfWork.Categorias.Delete(categoria);
+            _unityOfWork.Commit();
             if (categoriaDeletada is null)
             {
                 _logger.LogWarning("Categoria com id={id} não encontrada para deleção.", id);
