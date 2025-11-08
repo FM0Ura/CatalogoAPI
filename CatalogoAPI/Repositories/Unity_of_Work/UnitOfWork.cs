@@ -4,7 +4,7 @@ using CatalogoAPI.Repositories.Produtos;
 
 namespace CatalogoAPI.Repositories.Unity_of_Work;
 
-public class UnityOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
     private IProdutosRepository? _produtoRepo;
 
@@ -12,7 +12,7 @@ public class UnityOfWork : IUnitOfWork
 
     public CatalogoAPIContext _context;
 
-    public UnityOfWork(CatalogoAPIContext context)
+    public UnitOfWork(CatalogoAPIContext context)
     {
         _context = context;
     }

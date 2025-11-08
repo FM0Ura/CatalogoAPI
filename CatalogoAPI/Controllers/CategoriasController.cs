@@ -1,5 +1,6 @@
-﻿using CatalogoAPI.Models;
-using CatalogoAPI.Repositories.Generic;
+﻿using AutoMapper;
+using CatalogoAPI.DTOs;
+using CatalogoAPI.Models;
 using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,17 +10,19 @@ namespace CatalogoAPI.Controllers;
 [Route("[controller]")]
 public class CategoriasController : ControllerBase
 {
-    private readonly IUnityOfWork _unityOfWork;
+    private readonly IUnitOfWork _unityOfWork;
+    private readonly IMapper _mapper;
     private readonly ILogger<CategoriasController> _logger;
 
-    public CategoriasController(ILogger<CategoriasController> logger, IUnityOfWork unityOfWork)
+    public CategoriasController(ILogger<CategoriasController> logger, IUnitOfWork unityOfWork, IMapper mapper)
     {
         _logger = logger;
         _unityOfWork = unityOfWork;
+        _mapper = mapper;
     }
 
     [HttpGet(Name = "GetCategorias")]
-    public ActionResult<IEnumerable<CategoriaModel>> GetCategorias()
+    public ActionResult<IEnumerable<CategoriaDTO>> GetCategorias()
     {
         _logger.LogInformation("Consultando todas as categorias...");
         try
@@ -31,7 +34,7 @@ public class CategoriasController : ControllerBase
                 return NotFound("Nenhuma categoria encontrada.");
             }
 
-            return Ok(categorias);
+            return Ok(_mapper.Map<IEnumerable<CategoriaDTO>>(categorias));
         }
         catch (Exception ex)
         {
@@ -42,7 +45,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet("{id:int}", Name = "GetCategoria")]
-    public ActionResult<CategoriaModel> GetCategoriaPorId(int id)
+    public ActionResult<CategoriaDTO> GetCategoriaPorId(int id)
     {
         _logger.LogInformation("Consultando categoria com id={id}", id);
         try
@@ -55,7 +58,7 @@ public class CategoriasController : ControllerBase
                 return NotFound("Categoria não encontrada.");
             }
 
-            return Ok(categoria);
+            return Ok(_mapper.Map<CategoriaDTO>(categoria));
         }
         catch (Exception ex)
         {
@@ -66,9 +69,9 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult CriarCategoria(CategoriaModel categoria)
+    public ActionResult<CategoriaDTO> CriarCategoria(CategoriaDTO categoriaDTO)
     {
-        if (categoria is null)
+        if (categoriaDTO is null)
         {
             _logger.LogWarning("Tentativa de criar uma categoria com dados nulos.");
             return BadRequest("Os dados da categoria não podem ser nulos.");
@@ -77,9 +80,11 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Criando nova categoria...");
         try
         {
+            var categoria = _mapper.Map<Categoria>(categoriaDTO);
             var categoriaCriada = _unityOfWork.Categorias.Add(categoria);
             _unityOfWork.Commit();
-            return CreatedAtAction(nameof(GetCategoriaPorId), new { id = categoriaCriada.CategoriaId }, categoriaCriada);
+            var categoriaCriadaDTO = _mapper.Map<CategoriaDTO>(categoriaCriada);
+            return CreatedAtAction(nameof(GetCategoriaPorId), new { id = categoriaCriadaDTO.CategoriaId }, categoriaCriadaDTO);
         }
         catch (Exception ex)
         {
@@ -90,9 +95,9 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult ModificarCategoria(int id, CategoriaModel categoria)
+    public ActionResult<CategoriaDTO> ModificarCategoria(int id, CategoriaDTO categoriaDTO)
     {
-        if (categoria is null || id != categoria.CategoriaId)
+        if (categoriaDTO is null || id != categoriaDTO.CategoriaId)
         {
             _logger.LogWarning("Tentativa de modificar uma categoria com dados inválidos.");
             return BadRequest("Dados inválidos.");
@@ -101,6 +106,7 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Modificando categoria com id={id}", id);
         try
         {
+            var categoria = _mapper.Map<Categoria>(categoriaDTO);
             var categoriaAtualizada = _unityOfWork.Categorias.Update(categoria);
             _unityOfWork.Commit();
 
@@ -110,7 +116,7 @@ public class CategoriasController : ControllerBase
                 return NotFound("Categoria não encontrada.");
             }
 
-            return Ok(categoriaAtualizada);
+            return Ok(_mapper.Map<CategoriaDTO>(categoriaAtualizada));
         }
         catch (Exception ex)
         {
@@ -121,7 +127,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult DeletarCategoria(int id)
+    public ActionResult<CategoriaDTO> DeletarCategoria(int id)
     {
         var categoria = _unityOfWork.Categorias.GetOne(c => c.CategoriaId == id);
         if (categoria is null)
@@ -141,7 +147,7 @@ public class CategoriasController : ControllerBase
                 return NotFound("Categoria não encontrada.");
             }
 
-            return Ok(categoriaDeletada);
+            return Ok(_mapper.Map<CategoriaDTO>(categoriaDeletada));
         }
         catch (Exception ex)
         {

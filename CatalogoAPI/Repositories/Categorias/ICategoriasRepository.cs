@@ -2,6 +2,6 @@
 using CatalogoAPI.Repositories.Generic;
 
 namespace CatalogoAPI.Repositories.Categorias;
-public interface ICategoriasRepository : IRepositoryGeneric<CategoriaModel>
+public interface ICategoriasRepository : IRepositoryGeneric<Categoria>
 {
 }

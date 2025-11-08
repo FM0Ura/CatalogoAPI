@@ -9,16 +9,12 @@
 
   <ItemGroup>
     <Compile Remove="NovaPasta1\**" />
-    <Compile Remove="NovaPasta\**" />
     <Compile Remove="Validation\**" />
     <Content Remove="NovaPasta1\**" />
-    <Content Remove="NovaPasta\**" />
     <Content Remove="Validation\**" />
     <EmbeddedResource Remove="NovaPasta1\**" />
-    <EmbeddedResource Remove="NovaPasta\**" />
     <EmbeddedResource Remove="Validation\**" />
     <None Remove="NovaPasta1\**" />
-    <None Remove="NovaPasta\**" />
     <None Remove="Validation\**" />
   </ItemGroup>
 
@@ -28,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
       <PrivateAssets>all</PrivateAssets>

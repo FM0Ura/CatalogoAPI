@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CatalogoAPI.Models;
 
 [Table("Categorias")]
-public class CategoriaModel
+public class Categoria
 {
     [Key]
     public int CategoriaId { get; set; }
@@ -14,9 +14,9 @@ public class CategoriaModel
 
     [Required, StringLength(300)]
     public string? ImagemUrl { get; set; }
-    public ICollection<ProdutoModel>? Produtos { get; set; }
+    public ICollection<Produto>? Produtos { get; set; }
 
-    public CategoriaModel(string nome)
+    public Categoria(string nome)
     {
         Produtos = [];
         this.Nome = nome;

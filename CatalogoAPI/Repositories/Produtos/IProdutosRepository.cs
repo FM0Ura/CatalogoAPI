@@ -2,7 +2,7 @@
 using CatalogoAPI.Repositories.Generic;
 
 namespace CatalogoAPI.Repositories.Produtos;
-public interface IProdutosRepository : IRepositoryGeneric<ProdutoModel>
+public interface IProdutosRepository : IRepositoryGeneric<Produto>
 {
-    IEnumerable<ProdutoModel> GetProdutosPorCategoria(int categoriaId);
+    IEnumerable<Produto> GetProdutosPorCategoria(int categoriaId);
 }

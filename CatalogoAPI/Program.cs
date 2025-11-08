@@ -1,5 +1,6 @@
 using APICatalogo.Filters;
 using CatalogoAPI.Context;
+using CatalogoAPI.DTOs.Mapping;
 using CatalogoAPI.Extensions;
 using CatalogoAPI.Filters;
 using CatalogoAPI.Logging;
@@ -41,6 +42,8 @@ builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderCon
 {
     LogLevel = LogLevel.Debug,
 }));
+
+builder.Services.AddAutoMapper(cfg => { }, typeof(DTOMappingProfile));
 
 var app = builder.Build();
 

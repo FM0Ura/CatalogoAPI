@@ -4,13 +4,13 @@ using CatalogoAPI.Repositories.Generic;
 
 namespace CatalogoAPI.Repositories.Produtos;
 
-public class ProdutosRepository : RepositoryGeneric<ProdutoModel>, IProdutosRepository
+public class ProdutosRepository : RepositoryGeneric<Produto>, IProdutosRepository
 {
     public ProdutosRepository(CatalogoAPIContext context) : base(context)
     {
     }
 
-    public IEnumerable<ProdutoModel> GetProdutosPorCategoria(int categoriaId)
+    public IEnumerable<Produto> GetProdutosPorCategoria(int categoriaId)
     {
         return GetAll().Where(c => c.CategoriaId == categoriaId);
     }
