@@ -1,5 +1,5 @@
 ﻿using CatalogoAPI.Models;
-using CatalogoAPI.Repositories;
+using CatalogoAPI.Repositories.Generic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogoAPI.Controllers;
@@ -8,10 +8,10 @@ namespace CatalogoAPI.Controllers;
 [Route("[controller]")]
 public class CategoriasController : ControllerBase
 {
-    private readonly ICategoriasRepository _repository;
+    private readonly IRepositoryGeneric<CategoriaModel> _repository;
     private readonly ILogger<CategoriasController> _logger;
 
-    public CategoriasController(ICategoriasRepository repository, ILogger<CategoriasController> logger)
+    public CategoriasController(IRepositoryGeneric<CategoriaModel> repository, ILogger<CategoriasController> logger)
     {
         _repository = repository;
         _logger = logger;
@@ -23,7 +23,7 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Consultando todas as categorias...");
         try
         {
-            var categorias = _repository.GetCategorias();
+            var categorias = _repository.GetAll();
             if (categorias is null)
             {
                 _logger.LogWarning("Nenhuma categoria encontrada.");
@@ -46,7 +46,7 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Consultando categoria com id={id}", id);
         try
         {
-            var categoria = _repository.GetCategoria(id);
+            var categoria = _repository.GetOne(c => c.CategoriaId == id);
 
             if (categoria is null)
             {
@@ -64,30 +64,6 @@ public class CategoriasController : ControllerBase
         }
     }
 
-    [HttpGet("produtos")]
-    public ActionResult<IEnumerable<CategoriaModel>> GetCategoriasEProdutos()
-    {
-        _logger.LogInformation("Consultando categorias e seus produtos...");
-        try
-        {
-            var categoriasEProdutos = _repository.GetCategoriasEProdutos();
-
-            if (categoriasEProdutos is null)
-            {
-                _logger.LogWarning("Nenhuma categoria com produtos foi encontrada.");
-                return NotFound("Nenhuma categoria com produtos foi encontrada.");
-            }
-
-            return Ok(categoriasEProdutos);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Erro ao obter as categorias com produtos");
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                "Ocorreu um problema ao tratar a sua solicitação.");
-        }
-    }
-
     [HttpPost]
     public ActionResult CriarCategoria(CategoriaModel categoria)
     {
@@ -100,7 +76,7 @@ public class CategoriasController : ControllerBase
         _logger.LogInformation("Criando nova categoria...");
         try
         {
-            var categoriaCriada = _repository.Create(categoria);
+            var categoriaCriada = _repository.Add(categoria);
             return CreatedAtAction(nameof(GetCategoriaPorId), new { id = categoriaCriada.CategoriaId }, categoriaCriada);
         }
         catch (Exception ex)
@@ -144,10 +120,17 @@ public class CategoriasController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult DeletarCategoria(int id)
     {
-        _logger.LogInformation("Deletando categoria com id={id}", id);
+        var categoria = _repository.GetOne(c => c.CategoriaId == id);
+        if (categoria is null)
+        {
+            _logger.LogWarning("Tentativa de deletar uma categoria inexistente com id={id}.", id);
+            return NotFound("Categoria não encontrada.");
+        }
+
+        _logger.LogInformation("Deletando categoria com id={id}", categoria.CategoriaId);
         try
         {
-            var categoriaDeletada = _repository.Delete(id);
+            var categoriaDeletada = _repository.Delete(categoria);
 
             if (categoriaDeletada is null)
             {
