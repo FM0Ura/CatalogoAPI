@@ -68,6 +68,11 @@ A API precisa da senha do seu banco de dados MySQL para se conectar. A forma rec
 
 ### 3. Aplique as Migrations
 
+Instale o Entity Framework CLI globalmente, caso ainda não tenha feito:
+```bash
+dotnet tool install --global dotnet-ef
+```
+
 As migrations do Entity Framework criarão o banco de dados `catalogoDB` e as tabelas necessárias.
 
 ```bash

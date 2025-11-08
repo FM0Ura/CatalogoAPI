@@ -1,20 +1,25 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>370262bb-a5e2-4838-b23a-49ec62fd5c71</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="NovaPasta1\**" />
     <Compile Remove="NovaPasta\**" />
+    <Compile Remove="Validation\**" />
     <Content Remove="NovaPasta1\**" />
     <Content Remove="NovaPasta\**" />
+    <Content Remove="Validation\**" />
     <EmbeddedResource Remove="NovaPasta1\**" />
     <EmbeddedResource Remove="NovaPasta\**" />
+    <EmbeddedResource Remove="Validation\**" />
     <None Remove="NovaPasta1\**" />
     <None Remove="NovaPasta\**" />
+    <None Remove="Validation\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,10 +35,6 @@
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Validation\" />
   </ItemGroup>
 
 </Project>

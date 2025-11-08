@@ -3,7 +3,10 @@ using CatalogoAPI.Context;
 using CatalogoAPI.Extensions;
 using CatalogoAPI.Filters;
 using CatalogoAPI.Logging;
-using CatalogoAPI.Repositories;
+using CatalogoAPI.Repositories.Categorias;
+using CatalogoAPI.Repositories.Generic;
+using CatalogoAPI.Repositories.Produtos;
+using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
@@ -31,6 +34,9 @@ builder.Services.AddDbContext<CatalogoAPIContext>(options =>
 builder.Services.AddTransient<ApiLoggingFilter>();
 builder.Services.AddScoped<ICategoriasRepository, CategoriasRepository>();
 builder.Services.AddScoped<IProdutosRepository, ProdutosRepository>();
+builder.Services.AddScoped(typeof(IRepositoryGeneric<>), typeof(RepositoryGeneric<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderConfiguration
 {
     LogLevel = LogLevel.Debug,
