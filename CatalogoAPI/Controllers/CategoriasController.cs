@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CatalogoAPI.DTOs;
+using CatalogoAPI.DTOs.CategoriaDTO;
 using CatalogoAPI.Models;
 using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet(Name = "GetCategorias")]
-    public ActionResult<IEnumerable<CategoriaDTO>> GetCategorias()
+    public ActionResult<IEnumerable<CategoriaDTOResponse>> GetCategorias()
     {
         _logger.LogInformation("Consultando todas as categorias...");
         try
@@ -34,7 +34,7 @@ public class CategoriasController : ControllerBase
                 return NotFound("Nenhuma categoria encontrada.");
             }
 
-            return Ok(_mapper.Map<IEnumerable<CategoriaDTO>>(categorias));
+            return Ok(_mapper.Map<IEnumerable<CategoriaDTOResponse>>(categorias));
         }
         catch (Exception ex)
         {
@@ -45,7 +45,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet("{id:int}", Name = "GetCategoria")]
-    public ActionResult<CategoriaDTO> GetCategoriaPorId(int id)
+    public ActionResult<CategoriaDTOResponse> GetCategoriaPorId(int id)
     {
         _logger.LogInformation("Consultando categoria com id={id}", id);
         try
@@ -58,7 +58,7 @@ public class CategoriasController : ControllerBase
                 return NotFound("Categoria não encontrada.");
             }
 
-            return Ok(_mapper.Map<CategoriaDTO>(categoria));
+            return Ok(_mapper.Map<CategoriaDTOResponse>(categoria));
         }
         catch (Exception ex)
         {
@@ -69,7 +69,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<CategoriaDTO> CriarCategoria(CategoriaDTO categoriaDTO)
+    public ActionResult<CategoriaDTOResponse> CriarCategoria(CategoriaDTORequest categoriaDTO)
     {
         if (categoriaDTO is null)
         {
@@ -83,7 +83,7 @@ public class CategoriasController : ControllerBase
             var categoria = _mapper.Map<Categoria>(categoriaDTO);
             var categoriaCriada = _unityOfWork.Categorias.Add(categoria);
             _unityOfWork.Commit();
-            var categoriaCriadaDTO = _mapper.Map<CategoriaDTO>(categoriaCriada);
+            var categoriaCriadaDTO = _mapper.Map<CategoriaDTOResponse>(categoriaCriada);
             return CreatedAtAction(nameof(GetCategoriaPorId), new { id = categoriaCriadaDTO.CategoriaId }, categoriaCriadaDTO);
         }
         catch (Exception ex)
@@ -95,9 +95,9 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<CategoriaDTO> ModificarCategoria(int id, CategoriaDTO categoriaDTO)
+    public ActionResult<CategoriaDTOResponse> ModificarCategoria(int id, CategoriaDTORequest categoriaDTO)
     {
-        if (categoriaDTO is null || id != categoriaDTO.CategoriaId)
+        if (categoriaDTO is null || id != categoriaDTO.Id)
         {
             _logger.LogWarning("Tentativa de modificar uma categoria com dados inválidos.");
             return BadRequest("Dados inválidos.");
@@ -116,7 +116,7 @@ public class CategoriasController : ControllerBase
                 return NotFound("Categoria não encontrada.");
             }
 
-            return Ok(_mapper.Map<CategoriaDTO>(categoriaAtualizada));
+            return Ok(_mapper.Map<CategoriaDTOResponse>(categoriaAtualizada));
         }
         catch (Exception ex)
         {
@@ -127,7 +127,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult<CategoriaDTO> DeletarCategoria(int id)
+    public ActionResult<CategoriaDTOResponse> DeletarCategoria(int id)
     {
         var categoria = _unityOfWork.Categorias.GetOne(c => c.CategoriaId == id);
         if (categoria is null)
@@ -147,7 +147,7 @@ public class CategoriasController : ControllerBase
                 return NotFound("Categoria não encontrada.");
             }
 
-            return Ok(_mapper.Map<CategoriaDTO>(categoriaDeletada));
+            return Ok(_mapper.Map<CategoriaDTOResponse>(categoriaDeletada));
         }
         catch (Exception ex)
         {

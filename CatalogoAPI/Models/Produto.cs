@@ -13,7 +13,7 @@ public class Produto : IValidatableObject
     [Required, StringLength(80)]
     public string? Nome { get; set; }
 
-    [StringLength(300)]
+    [Required, StringLength(300)]
     public string? Descricao { get; set; }
 
     [Required, Column(TypeName ="decimal(10,2)")]
