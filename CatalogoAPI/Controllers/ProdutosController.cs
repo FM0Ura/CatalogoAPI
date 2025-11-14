@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CatalogoAPI.DTOs.ProdutoDTO;
 using CatalogoAPI.Models;
+using CatalogoAPI.Pagination;
 using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +42,37 @@ public class ProdutosController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro ao obter os produtos.");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar a sua solicitação.");
+        }
+    }
+
+    [HttpGet("pagination")]
+    public ActionResult<IEnumerable<ProdutoDTOResponse>> GetProdutosPaginados([FromQuery] ProdutosParameter produtosParams)
+    {
+        _logger.LogInformation("Consultando produtos paginados...");
+        try
+        {
+            var produtosPaginados = _unityOfWork.Produtos.GetProdutos(produtosParams);
+
+            var metadata = new
+            {
+                produtosPaginados.TotalCount,
+                produtosPaginados.PageSize,
+                produtosPaginados.CurrentPage,
+                produtosPaginados.TotalPages,
+                produtosPaginados.HasNext,
+                produtosPaginados.HasPrevious
+            };
+
+            Response.Headers.Append("X-Pagination",
+                System.Text.Json.JsonSerializer.Serialize(metadata));
+            var produtosDTO = _mapper.Map<IEnumerable<ProdutoDTOResponse>>(produtosPaginados);
+            return Ok(produtosDTO);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao obter os produtos paginados.");
             return StatusCode(StatusCodes.Status500InternalServerError,
                 "Ocorreu um problema ao tratar a sua solicitação.");
         }
