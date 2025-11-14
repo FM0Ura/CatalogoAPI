@@ -5,6 +5,6 @@ using CatalogoAPI.Repositories.Generic;
 namespace CatalogoAPI.Repositories.Produtos;
 public interface IProdutosRepository : IRepositoryGeneric<Produto>
 {
-    PagedList<Produto> GetProdutos(ProdutosParameter produtosParameter);
+    PagedList<Produto> GetProdutos(Pagination.QueryStringParameters produtosParameter);
     IEnumerable<Produto> GetProdutosPorCategoria(int categoriaId);
 }

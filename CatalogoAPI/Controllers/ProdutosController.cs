@@ -48,7 +48,7 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet("pagination")]
-    public ActionResult<IEnumerable<ProdutoDTOResponse>> GetProdutosPaginados([FromQuery] ProdutosParameter produtosParams)
+    public ActionResult<IEnumerable<ProdutoDTOResponse>> GetProdutosPaginados([FromQuery] Pagination.QueryStringParameters produtosParams)
     {
         _logger.LogInformation("Consultando produtos paginados...");
         try

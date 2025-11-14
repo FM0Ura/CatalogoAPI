@@ -1,6 +1,6 @@
 ﻿namespace CatalogoAPI.Pagination;
 
-public class ProdutosParameter
+public class QueryStringParameters
 {
     const int maxPageSize = 50;
     public int PageNumber { get; set; } = 1;
