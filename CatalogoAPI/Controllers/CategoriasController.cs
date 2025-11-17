@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CatalogoAPI.DTOs.CategoriaDTO;
 using CatalogoAPI.Models;
+using CatalogoAPI.Pagination;
 using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,29 @@ public class CategoriasController : ControllerBase
         try
         {
             var categorias = _unityOfWork.Categorias.GetAll();
+            if (categorias is null)
+            {
+                _logger.LogWarning("Nenhuma categoria encontrada.");
+                return NotFound("Nenhuma categoria encontrada.");
+            }
+
+            return Ok(_mapper.Map<IEnumerable<CategoriaDTOResponse>>(categorias));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao obter as categorias");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "Ocorreu um problema ao tratar a sua solicitação.");
+        }
+    }
+
+    [HttpGet("filter/nome/pagination")]
+    public ActionResult<IEnumerable<CategoriaDTOResponse>> GetCategoriasFiltroNome([FromQuery] CategoriasFiltroNome categoriasParams)
+    {
+        _logger.LogInformation("Consultando todas as categorias...");
+        try
+        {
+            var categorias = _unityOfWork.Categorias.GetCategoriasFiltroNome(categoriasParams);
             if (categorias is null)
             {
                 _logger.LogWarning("Nenhuma categoria encontrada.");
