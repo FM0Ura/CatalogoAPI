@@ -1,6 +1,7 @@
 ﻿using CatalogoAPI.Context;
 using CatalogoAPI.Models;
 using CatalogoAPI.Pagination;
+using CatalogoAPI.Pagination.Categorias;
 using CatalogoAPI.Repositories.Generic;
 
 namespace CatalogoAPI.Repositories.Categorias;
@@ -10,9 +11,20 @@ public class CategoriasRepository : RepositoryGeneric<Categoria>, ICategoriasRep
     {
     }
 
-    public PagedList<Categoria> GetCategoriasFiltroNome(CategoriasFiltroNome categoriasParams)
+    public async Task<PagedList<Categoria>> GetCategoriasAsync(QueryStringParameters categoriasParams)
     {
-        var categorias = _context.Categorias.AsQueryable();
+        var categorias = await GetAllAsync();
+
+        var categoriasOrdenadas = categorias.OrderBy(c => c.CategoriaId).AsQueryable();
+
+        var categoriasPaginadas = PagedList<Categoria>.ToPagedList(categoriasOrdenadas, categoriasParams.PageNumber, categoriasParams.PageSize);
+
+        return categoriasPaginadas;
+    }
+
+    public async Task<PagedList<Categoria>> GetCategoriasFiltroNomeAsync(CategoriasFiltroNome categoriasParams)
+    {
+        var categorias = await GetAllAsync();
 
         if (!string.IsNullOrEmpty(categoriasParams.Nome) && !string.IsNullOrEmpty(categoriasParams.CriterioBusca))
         { // "inicia", "contém", "termina", "igual", "não contém"
@@ -37,6 +49,9 @@ public class CategoriasRepository : RepositoryGeneric<Categoria>, ICategoriasRep
                 categorias = categorias.Where(c => c.Nome!.Contains(categoriasParams.Nome));
             }
         }
-        return PagedList<Categoria>.ToPagedList(categorias, categoriasParams.PageNumber, categoriasParams.PageSize);
+
+        var categoriasPaginadas = PagedList<Categoria>.ToPagedList(categorias.OrderBy(c => c.CategoriaId).AsQueryable(), categoriasParams.PageNumber, categoriasParams.PageSize);
+
+        return categoriasPaginadas;
     }
 }

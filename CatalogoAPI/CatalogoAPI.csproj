@@ -8,20 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NovaPasta1\**" />
-    <Compile Remove="Validation\**" />
-    <Content Remove="NovaPasta1\**" />
-    <Content Remove="Validation\**" />
-    <EmbeddedResource Remove="NovaPasta1\**" />
-    <EmbeddedResource Remove="Validation\**" />
-    <None Remove="NovaPasta1\**" />
-    <None Remove="Validation\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\WeatherForecastController.cs" />
-    <Compile Remove="DTOs\ProdutoDTO\ProdutoDTO.cs" />
-    <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,8 +2,10 @@
 using CatalogoAPI.DTOs.ProdutoDTO;
 using CatalogoAPI.Models;
 using CatalogoAPI.Pagination;
+using CatalogoAPI.Pagination.Produtos;
 using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace CatalogoAPI.Controllers;
 
@@ -23,12 +25,12 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<ProdutoDTOResponse>> GetProdutos()
+    public async Task<ActionResult<IEnumerable<ProdutoDTOResponse>>> GetProdutosAsync()
     {
         _logger.LogInformation("Consultando todos os produtos...");
         try
         {
-            var produtos = _unityOfWork.Produtos.GetAll();
+            var produtos = await _unityOfWork.Produtos.GetAllAsync();
             if (produtos is null || !produtos.Any())
             {
                 _logger.LogWarning("Nenhum produto encontrado.");
@@ -48,12 +50,12 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet("pagination")]
-    public ActionResult<IEnumerable<ProdutoDTOResponse>> GetProdutosPaginados([FromQuery] QueryStringParameters produtosParams)
+    public async Task<ActionResult<IEnumerable<ProdutoDTOResponse>>> GetProdutosPaginadosAsync([FromQuery] QueryStringParameters produtosParams)
     {
         _logger.LogInformation("Consultando produtos paginados...");
         try
         {
-            var produtosPaginados = _unityOfWork.Produtos.GetProdutos(produtosParams);
+            var produtosPaginados = await _unityOfWork.Produtos.GetProdutosAsync(produtosParams);
 
             var metadata = new
             {
@@ -77,13 +79,14 @@ public class ProdutosController : ControllerBase
                 "Ocorreu um problema ao tratar a sua solicitação.");
         }
     }
+
     [HttpGet("filter/preco/pagination")]
-    public ActionResult<IEnumerable<ProdutoDTOResponse>> GetProdutosFiltradosPorPrecoPaginados([FromQuery] ProdutosFiltroPreco produtosParams)
+    public async Task<ActionResult<IEnumerable<ProdutoDTOResponse>>> GetProdutosFiltradosPorPrecoPaginadosAsync([FromQuery] ProdutosFiltroPreco produtosParams)
     {
         _logger.LogInformation("Consultando produtos paginados...");
         try
         {
-            var produtosPaginados = _unityOfWork.Produtos.GetProdutosFiltroPreco(produtosParams);
+            var produtosPaginados = await _unityOfWork.Produtos.GetProdutosFiltroPrecoAsync(produtosParams);
 
             var metadata = new
             {
@@ -109,12 +112,12 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
-    public ActionResult<ProdutoDTOResponse> GetProduto(int id)
+    public async Task<ActionResult<ProdutoDTOResponse>> GetProdutoAsync(int id)
     {
         _logger.LogInformation("Consultando produto com id={id}", id);
         try
         {
-            var produto = _unityOfWork.Produtos.GetOne(c=> c.ProdutoId == id);
+            var produto = await _unityOfWork.Produtos.GetOneAsync(c=> c.ProdutoId == id);
             if (produto is null)
             {
                 _logger.LogWarning("Produto com id={id} não encontrado.", id);
@@ -134,12 +137,12 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet("categoria/{categoriaId:int}")]
-    public ActionResult<IEnumerable<ProdutoDTOResponse>> GetProdutosporCategoria(int categoriaId)
+    public async Task<ActionResult<IEnumerable<ProdutoDTOResponse>>> GetProdutosporCategoriaAsync(int categoriaId)
     {
         _logger.LogInformation("Consultando categorias e seus produtos...");
         try
         {
-            var categoriasEProdutos = _unityOfWork.Produtos.GetProdutosPorCategoria(categoriaId);
+            var categoriasEProdutos = await _unityOfWork.Produtos.GetProdutosPorCategoriaAsync(categoriaId);
             Console.WriteLine(categoriasEProdutos);
             if (categoriasEProdutos is null || !categoriasEProdutos.Any())
             {
@@ -158,7 +161,7 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<ProdutoDTOResponse> PostProduto(ProdutoDTORequest produtoDTO)
+    public async Task<ActionResult<ProdutoDTOResponse>> PostProdutoAsync(ProdutoDTORequest produtoDTO)
     {
         if (produtoDTO is null)
         {
@@ -172,7 +175,7 @@ public class ProdutosController : ControllerBase
             var produto = _mapper.Map<Produto>(produtoDTO);
 
             var produtoCriado = _unityOfWork.Produtos.Add(produto);
-            _unityOfWork.Commit();
+            await _unityOfWork.CommitAsync();
 
             var novoProdutoDTO = _mapper.Map<ProdutoDTOResponse>(produtoCriado);
 
@@ -188,7 +191,7 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public ActionResult<ProdutoDTOResponse> AlterarProduto(int id, ProdutoDTORequest produtoDTO)
+    public async Task<ActionResult<ProdutoDTOResponse>> AlterarProdutoAsync(int id, ProdutoDTORequest produtoDTO)
     {
         if (produtoDTO is null || id != produtoDTO.ProdutoId)
         {
@@ -201,7 +204,7 @@ public class ProdutosController : ControllerBase
         {
             var produto = _mapper.Map<Produto>(produtoDTO);
             var produtoAtualizado = _unityOfWork.Produtos.Update(produto);
-            _unityOfWork.Commit();
+            await _unityOfWork.CommitAsync();
 
             return Ok(_mapper.Map<ProdutoDTOResponse>(produtoAtualizado));
         }
@@ -214,10 +217,10 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult<ProdutoDTOResponse> DeletarProduto(int id)
+    public async Task<ActionResult<ProdutoDTOResponse>> DeletarProdutoAsync(int id)
     {
         _logger.LogInformation("Deletando produto com id={id}", id);
-        var produto = _unityOfWork.Produtos.GetOne(c => c.ProdutoId == id);
+        var produto = await _unityOfWork.Produtos.GetOneAsync(c => c.ProdutoId == id);
 
         if (produto is null)
         { 
@@ -227,7 +230,7 @@ public class ProdutosController : ControllerBase
         try
         {
             var produtoDeletado = _unityOfWork.Produtos.Delete(produto);
-            _unityOfWork.Commit();
+            await _unityOfWork.CommitAsync();
             if (produtoDeletado is null)
             {
                 return NotFound("Produto não encontrado.");

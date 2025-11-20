@@ -1,4 +1,4 @@
-﻿namespace CatalogoAPI.Pagination;
+﻿namespace CatalogoAPI.Pagination.Categorias;
 
 public class CategoriasFiltroNome : CategoriasParameters
 {
