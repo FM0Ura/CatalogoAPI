@@ -1,4 +1,4 @@
-﻿namespace CatalogoAPI.Pagination;
+﻿namespace CatalogoAPI.Pagination.Produtos;
 
 public class ProdutosFiltroPreco : ProdutosParameters
 {

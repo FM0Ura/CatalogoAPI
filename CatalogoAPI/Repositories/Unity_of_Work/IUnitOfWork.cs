@@ -7,6 +7,5 @@ public interface IUnitOfWork
 {
     IProdutosRepository Produtos { get; }
     ICategoriasRepository Categorias { get; }
-    void Commit();
-    void Rollback();
+    Task CommitAsync();
 }

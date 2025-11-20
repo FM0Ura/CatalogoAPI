@@ -11,14 +11,13 @@ public class RepositoryGeneric<T> : IRepositoryGeneric<T> where T : class
     {
         _context = context;
     }
-
-    public IEnumerable<T> GetAll()
+    public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return _context.Set<T>().AsNoTracking().ToList();
+        return await _context.Set<T>().AsNoTracking().ToListAsync();
     }
-    public T? GetOne(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
+    public async Task<T?> GetOneAsync(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
     {
-        return _context.Set<T>().AsNoTracking().FirstOrDefault(predicate);
+        return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate);
     }
     public T Add(T entity)
     {
@@ -30,7 +29,6 @@ public class RepositoryGeneric<T> : IRepositoryGeneric<T> where T : class
         _context.Set<T>().Update(entity);
         return entity;
     }
-
     public T Delete(T entity)
     {
         _context.Set<T>().Remove(entity);

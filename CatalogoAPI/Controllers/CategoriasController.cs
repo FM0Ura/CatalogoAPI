@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CatalogoAPI.DTOs.CategoriaDTO;
 using CatalogoAPI.Models;
-using CatalogoAPI.Pagination;
+using CatalogoAPI.Pagination.Categorias;
 using CatalogoAPI.Repositories.Unity_of_Work;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,12 +23,12 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet(Name = "GetCategorias")]
-    public ActionResult<IEnumerable<CategoriaDTOResponse>> GetCategorias()
+    public async Task<ActionResult<IEnumerable<CategoriaDTOResponse>>> GetCategoriasAsync()
     {
         _logger.LogInformation("Consultando todas as categorias...");
         try
         {
-            var categorias = _unityOfWork.Categorias.GetAll();
+            var categorias = await _unityOfWork.Categorias.GetAllAsync();
             if (categorias is null)
             {
                 _logger.LogWarning("Nenhuma categoria encontrada.");
@@ -46,12 +46,12 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet("filter/nome/pagination")]
-    public ActionResult<IEnumerable<CategoriaDTOResponse>> GetCategoriasFiltroNome([FromQuery] CategoriasFiltroNome categoriasParams)
+    public async Task<ActionResult<IEnumerable<CategoriaDTOResponse>>> GetCategoriasFiltroNomeAsync([FromQuery] CategoriasFiltroNome categoriasParams)
     {
         _logger.LogInformation("Consultando todas as categorias...");
         try
         {
-            var categorias = _unityOfWork.Categorias.GetCategoriasFiltroNome(categoriasParams);
+            var categorias = await _unityOfWork.Categorias.GetCategoriasFiltroNomeAsync(categoriasParams);
             if (categorias is null)
             {
                 _logger.LogWarning("Nenhuma categoria encontrada.");
@@ -69,12 +69,12 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet("{id:int}", Name = "GetCategoria")]
-    public ActionResult<CategoriaDTOResponse> GetCategoriaPorId(int id)
+    public async Task<ActionResult<CategoriaDTOResponse>> GetCategoriaPorIdAsync(int id)
     {
         _logger.LogInformation("Consultando categoria com id={id}", id);
         try
         {
-            var categoria = _unityOfWork.Categorias.GetOne(c => c.CategoriaId == id);
+            var categoria = await _unityOfWork.Categorias.GetOneAsync(c => c.CategoriaId == id);
 
             if (categoria is null)
             {
@@ -93,7 +93,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<CategoriaDTOResponse> CriarCategoria(CategoriaDTORequest categoriaDTO)
+    public async Task<ActionResult<CategoriaDTOResponse>> CriarCategoriaAsync(CategoriaDTORequest categoriaDTO)
     {
         if (categoriaDTO is null)
         {
@@ -106,9 +106,9 @@ public class CategoriasController : ControllerBase
         {
             var categoria = _mapper.Map<Categoria>(categoriaDTO);
             var categoriaCriada = _unityOfWork.Categorias.Add(categoria);
-            _unityOfWork.Commit();
+            await _unityOfWork.CommitAsync();
             var categoriaCriadaDTO = _mapper.Map<CategoriaDTOResponse>(categoriaCriada);
-            return CreatedAtAction(nameof(GetCategoriaPorId), new { id = categoriaCriadaDTO.CategoriaId }, categoriaCriadaDTO);
+            return CreatedAtAction(nameof(GetCategoriaPorIdAsync), new { id = categoriaCriadaDTO.CategoriaId }, categoriaCriadaDTO);
         }
         catch (Exception ex)
         {
@@ -119,7 +119,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<CategoriaDTOResponse> ModificarCategoria(int id, CategoriaDTORequest categoriaDTO)
+    public async Task<ActionResult<CategoriaDTOResponse>> ModificarCategoriaAsync(int id, CategoriaDTORequest categoriaDTO)
     {
         if (categoriaDTO is null || id != categoriaDTO.Id)
         {
@@ -132,7 +132,7 @@ public class CategoriasController : ControllerBase
         {
             var categoria = _mapper.Map<Categoria>(categoriaDTO);
             var categoriaAtualizada = _unityOfWork.Categorias.Update(categoria);
-            _unityOfWork.Commit();
+            await _unityOfWork.CommitAsync();
 
             if (categoriaAtualizada is null)
             {
@@ -151,9 +151,9 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult<CategoriaDTOResponse> DeletarCategoria(int id)
+    public async Task<ActionResult<CategoriaDTOResponse>> DeletarCategoria(int id)
     {
-        var categoria = _unityOfWork.Categorias.GetOne(c => c.CategoriaId == id);
+        var categoria = await _unityOfWork.Categorias.GetOneAsync(c => c.CategoriaId == id);
         if (categoria is null)
         {
             _logger.LogWarning("Tentativa de deletar uma categoria inexistente com id={id}.", id);
@@ -164,7 +164,7 @@ public class CategoriasController : ControllerBase
         try
         {
             var categoriaDeletada = _unityOfWork.Categorias.Delete(categoria);
-            _unityOfWork.Commit();
+            await _unityOfWork.CommitAsync();
             if (categoriaDeletada is null)
             {
                 _logger.LogWarning("Categoria com id={id} não encontrada para deleção.", id);
