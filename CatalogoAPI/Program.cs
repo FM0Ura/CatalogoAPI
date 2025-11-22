@@ -8,6 +8,7 @@ using CatalogoAPI.Repositories.Categorias;
 using CatalogoAPI.Repositories.Generic;
 using CatalogoAPI.Repositories.Produtos;
 using CatalogoAPI.Repositories.Unity_of_Work;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
@@ -21,7 +22,17 @@ builder.Services.AddControllers(options =>
 }).AddJsonOptions(options =>
         options.JsonSerializerOptions
             .ReferenceHandler = ReferenceHandler.IgnoreCycles).AddNewtonsoftJson();
-builder.Services.AddOpenApi(); // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddOpenApi();
+
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<CatalogoAPIContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication("Bearer").AddJwtBearer();
+builder.Services.AddAuthorization();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var password = builder.Configuration["MYSQL_root_PASS"];
@@ -33,6 +44,7 @@ builder.Services.AddDbContext<CatalogoAPIContext>(options =>
     ServerVersion.AutoDetect(fullConnectionString)));
 
 builder.Services.AddTransient<ApiLoggingFilter>();
+
 builder.Services.AddScoped<ICategoriasRepository, CategoriasRepository>();
 builder.Services.AddScoped<IProdutosRepository, ProdutosRepository>();
 builder.Services.AddScoped(typeof(IRepositoryGeneric<>), typeof(RepositoryGeneric<>));
@@ -54,7 +66,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     app.ConfigureExceptionHandler();
 }
-app.UseCors(policy => policy.WithOrigins("http://localhost:50077"));
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
