@@ -10,17 +10,30 @@ public class Produto : IValidatableObject
     [Key]
     public int ProdutoId { get; set; }
 
-    [Required, StringLength(80)]
+    [
+        Required(ErrorMessage = "O nome do produto é obrigatório."),
+        StringLength(100, MinimumLength = 3,
+        ErrorMessage = "O nome deve ter entre 3 e 100 caracteres.")
+    ]
     public string? Nome { get; set; }
 
-    [Required, StringLength(300)]
+    [
+        Required(ErrorMessage = "O nome do produto é obrigatório."), 
+        StringLength(300, MinimumLength = 1,
+        ErrorMessage = "A descrição deve ter entre 1 e 100 caracteres.")
+    ]
     public string? Descricao { get; set; }
 
-    [Required, Column(TypeName ="decimal(10,2)")]
+    [
+        Required(ErrorMessage = "O preço do produto é obrigatório."),
+        Column(TypeName ="decimal(10,2)")
+    ]
     public decimal Preco { get; set; }
 
     [StringLength(300)]
     public string? ImagemUrl { get; set; }
+
+    [Range(0, 2000000, ErrorMessage = "O estoque não pode ser negativo.")]
     public float Estoque { get; set; }
 
     [JsonIgnore]

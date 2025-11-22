@@ -4,8 +4,8 @@ using CatalogoAPI.Models;
 using CatalogoAPI.Pagination;
 using CatalogoAPI.Pagination.Produtos;
 using CatalogoAPI.Repositories.Unity_of_Work;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace CatalogoAPI.Controllers;
 
@@ -24,7 +24,7 @@ public class ProdutosController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet, Authorize]
     public async Task<ActionResult<IEnumerable<ProdutoDTOResponse>>> GetProdutosAsync()
     {
         _logger.LogInformation("Consultando todos os produtos...");
@@ -49,7 +49,7 @@ public class ProdutosController : ControllerBase
         }
     }
 
-    [HttpGet("pagination")]
+    [HttpGet("pagination"), Authorize]
     public async Task<ActionResult<IEnumerable<ProdutoDTOResponse>>> GetProdutosPaginadosAsync([FromQuery] QueryStringParameters produtosParams)
     {
         _logger.LogInformation("Consultando produtos paginados...");
@@ -80,7 +80,7 @@ public class ProdutosController : ControllerBase
         }
     }
 
-    [HttpGet("filter/preco/pagination")]
+    [HttpGet("filter/preco/pagination"), Authorize]
     public async Task<ActionResult<IEnumerable<ProdutoDTOResponse>>> GetProdutosFiltradosPorPrecoPaginadosAsync([FromQuery] ProdutosFiltroPreco produtosParams)
     {
         _logger.LogInformation("Consultando produtos paginados...");

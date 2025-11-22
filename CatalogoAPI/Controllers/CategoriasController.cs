@@ -3,6 +3,7 @@ using CatalogoAPI.DTOs.CategoriaDTO;
 using CatalogoAPI.Models;
 using CatalogoAPI.Pagination.Categorias;
 using CatalogoAPI.Repositories.Unity_of_Work;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CatalogoAPI.Controllers;
@@ -22,7 +23,8 @@ public class CategoriasController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet(Name = "GetCategorias")]
+    [HttpGet]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<CategoriaDTOResponse>>> GetCategoriasAsync()
     {
         _logger.LogInformation("Consultando todas as categorias...");
@@ -68,7 +70,7 @@ public class CategoriasController : ControllerBase
         }
     }
 
-    [HttpGet("{id:int}", Name = "GetCategoria")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<CategoriaDTOResponse>> GetCategoriaPorIdAsync(int id)
     {
         _logger.LogInformation("Consultando categoria com id={id}", id);
