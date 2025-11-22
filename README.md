@@ -4,7 +4,7 @@ API de catálogo de produtos desenvolvida com ASP.NET Core, Entity Framework e M
 
 ## 📖 Sobre o Projeto
 
-`CatalogoAPI` é uma API RESTful criada para gerenciar um catálogo de produtos e suas respectivas categorias. Ela oferece endpoints para realizar operações CRUD (Criar, Ler, Atualizar e Deletar) tanto para produtos quanto para categorias, além de funcionalidades como logging customizado e tratamento de exceções.
+`CatalogoAPI` é uma API RESTful criada para gerenciar um catálogo de produtos e suas respectivas categorias. Ela oferece endpoints para realizar operações CRUD (Criar, Ler, Atualizar e Deletar) tanto para produtos quanto para categorias, além de funcionalidades como paginação, logging customizado, tratamento de exceções e autenticação via JWT.
 
 Este projeto foi desenvolvido como um exemplo prático de construção de APIs com a stack .NET, demonstrando o uso de boas práticas e ferramentas modernas.
 
@@ -12,6 +12,8 @@ Este projeto foi desenvolvido como um exemplo prático de construção de APIs c
 
 - **Gestão de Produtos**: CRUD completo para produtos.
 - **Gestão de Categorias**: CRUD completo para categorias.
+- **Paginação**: Suporte para paginação nos endpoints de consulta.
+- **Autenticação**: Endpoints protegidos com autenticação baseada em JSON Web Tokens (JWT).
 - **Relacionamento**: Cada produto está associado a uma categoria.
 - **Documentação de API**: Interface do Swagger e Scalar para testar os endpoints.
 - **Logging**: Filtro de log para registrar informações sobre as requisições.
@@ -24,6 +26,7 @@ Este projeto foi desenvolvido como um exemplo prático de construção de APIs c
 - **[Entity Framework Core](https://learn.microsoft.com/pt-br/ef/core/)**
 - **[MySQL](https://www.mysql.com/)**
 - **[Swagger/OpenAPI](https://swagger.io/)**
+- **[JSON Web Tokens (JWT)](https://jwt.io/)**
 
 ## 🚀 Como Executar o Projeto
 
@@ -96,6 +99,7 @@ Você pode acessar a documentação interativa do Swagger em `https://localhost:
 ### Categorias
 
 -   `GET /Categorias`: Retorna todas as categorias.
+-   `GET /Categorias/pagination`: Retorna categorias com paginação.
 -   `GET /Categorias/{id}`: Retorna uma categoria específica pelo seu ID.
 -   `GET /Categorias/produtos`: Retorna todas as categorias com seus respectivos produtos.
 -   `POST /Categorias`: Cria uma nova categoria.
@@ -105,7 +109,10 @@ Você pode acessar a documentação interativa do Swagger em `https://localhost:
 ### Produtos
 
 -   `GET /Produtos`: Retorna todos os produtos.
+-   `GET /Produtos/pagination`: Retorna produtos com paginação.
+-   `GET /Produtos/filter/preco/pagination`: Filtra produtos por preço com paginação.
 -   `GET /Produtos/{id}`: Retorna um produto específico pelo seu ID.
+-   `GET /Produtos/categoria/{id}`: Retorna produtos de uma categoria específica.
 -   `POST /Produtos`: Cria um novo produto.
 -   `PUT /Produtos/{id}`: Atualiza um produto existente.
 -   `DELETE /Produtos/{id}`: Deleta um produto.
