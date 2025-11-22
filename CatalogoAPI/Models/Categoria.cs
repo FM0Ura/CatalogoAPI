@@ -9,10 +9,17 @@ public class Categoria
     [Key]
     public int CategoriaId { get; set; }
 
-    [Required, StringLength(80)]
+    [
+        Required(ErrorMessage = "O nome da categoria é obrigatório."),
+        StringLength(100, MinimumLength = 5,
+        ErrorMessage = "O nome deve ter entre 5 e 100 caracteres.")
+    ]
     public string Nome { get; set; }
 
-    [Required, StringLength(300)]
+    [
+        Url(ErrorMessage = "A URL da imagem é inválida."),
+        StringLength(300)
+    ]
     public string? ImagemUrl { get; set; }
     public ICollection<Produto>? Produtos { get; set; }
 
